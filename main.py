@@ -65,7 +65,7 @@ def text(message):
         db_object.execute(f"SELECT COUNT(1) FROM admins") # Перевіряєм, чи є користувач в базі
         result = db_object.fetchone()
         logger.warning(result)
-        for i in range(0, int(result[0])):
+        for i in range(0, result[0]):
             if i not in passed_tests:
                 bot.send_message(message.chat.id, f"Тема, яку ти ще не проходив - {i}")
                 break
@@ -76,8 +76,10 @@ def text(message):
         db_object.execute(f"SELECT * FROM admins LIMIT 10")
         result = db_object.fetchone()
         markup = types.ReplyKeyboardMarkup() # Для кнопочок                               # Якщо користувач надумав змінити мову
-        go_back = types.KeyboardButton("Назад")
+        go_back = types.KeyboardButton("Назад на головну")
         bot.send_message(message.chat.id, "Список тем", reply_markup=markup.add(go_back))
+    elif message.text == "Назад на головну":
+        user_step_1(message)
     # if all(message.text != it for it in ["/instruction", "/start", "/lang", "/my_money", "/help"]):
     #     db_object.execute(f"SELECT lang FROM users WHERE id = {message.from_user.id}") 
     #     result = db_object.fetchone()
