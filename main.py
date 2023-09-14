@@ -64,6 +64,7 @@ def text(message):
         passed_tests = list(map(int, result[0].split(",")))
         db_object.execute(f"SELECT COUNT(1) FROM admins") # Перевіряєм, чи є користувач в базі
         result = db_object.fetchone()
+        logger.warning(result)
         for i in range(0, int(result[0])):
             if i not in passed_tests:
                 bot.send_message(message.chat.id, f"Тема, яку ти ще не проходив - {i}")
