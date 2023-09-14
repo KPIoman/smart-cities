@@ -62,11 +62,13 @@ def text(message):
         db_object.execute(f"SELECT passed_tests FROM users WHERE id = {message.from_user.id}") # Перевіряєм, чи є користувач в базі
         result = db_object.fetchone()
         passed_tests = list(map(int, result[0].split(",")))
-        for i in range(0, max(passed_tests)+1):
+        db_object.execute(f"SELECT COUNT(1) FROM admins") # Перевіряєм, чи є користувач в базі
+        result = db_object.fetchone()
+        for i in range(0, int(result[0])):
             if i not in passed_tests:
                 bot.send_message(message.chat.id, f"Тема, яку ти ще не проходив - {i}")
                 break
-        bot.send_message(message.chat.id, passed_tests)
+        #bot.send_message(message.chat.id, passed_tests)
         # bot.edit_message_text(f"{welcome[call.data[0:2]]}, {call.data[3:len(list(call.data))]}!", chat_id=call.message.chat.id, message_id=call.message.message_id) # Міняєм просьбу про зміну мови просто на привітання на його мові
         # instruction(call, True, True)
     elif message.text == "Перепройти тему":
@@ -75,7 +77,6 @@ def text(message):
         markup = types.ReplyKeyboardMarkup() # Для кнопочок                               # Якщо користувач надумав змінити мову
         go_back = types.KeyboardButton("Назад")
         bot.send_message(message.chat.id, "Список тем", reply_markup=markup.add(go_back))
-        logger.warning(result)
     # if all(message.text != it for it in ["/instruction", "/start", "/lang", "/my_money", "/help"]):
     #     db_object.execute(f"SELECT lang FROM users WHERE id = {message.from_user.id}") 
     #     result = db_object.fetchone()
