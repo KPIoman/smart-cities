@@ -84,12 +84,7 @@ def text(message):
         # bot.edit_message_text(f"{welcome[call.data[0:2]]}, {call.data[3:len(list(call.data))]}!", chat_id=call.message.chat.id, message_id=call.message.message_id) # Міняєм просьбу про зміну мови просто на привітання на його мові
         # instruction(call, True, True)
     elif message.text == "Перепройти тему":
-        db_object.execute(f"SELECT * FROM admins LIMIT 10")
-        result = db_object.fetchone()
-        markup = types.ReplyKeyboardMarkup() # Для кнопочок                               # Якщо користувач надумав змінити мову
-        go_back = types.KeyboardButton("Назад на головну")
-        logger.warning(result)
-        bot.send_message(message.chat.id, f"Список тем:", reply_markup=markup.add(go_back))
+        go_over_the_topic(message)
     elif message.text == "Назад на головну":
         user_step_1(message)
     # if all(message.text != it for it in ["/instruction", "/start", "/lang", "/my_money", "/help"]):
@@ -106,12 +101,27 @@ def text(message):
     #             bot.send_message(message.chat.id, invalid_message[result[0]])
 
 
+def go_over_the_topic(message, start = 0):
+    db_object.execute(f"SELECT * FROM admins LIMIT {start}, 10")
+    result = db_object.fetchone()
+    markup1 = types.ReplyKeyboardMarkup()
+    markup2 = types.InlineKeyboardMarkup()
+    next10 = types.InlineKeyboardButton("Наступні 10 тем", callback_data  = "next " + str(start + 10))
+    go_back = types.KeyboardButton("Назад на головну")
+    logger.warning(result)
+    if start == 0:
+        bot.send_message(message.chat.id, f"Натисність на номер теми зі слешом, наприклад /1, щоб її вибрати", reply_markup=markup1.add(go_back))
+        bot.send_message(message.chat.id, f"Список тем: {start + 10}", reply_markup=markup2.add(next10))
+    else:
+        bot.edit_message_text(f"Список тем: {start + 10}", reply_markup=markup2.add(next10), chat_id=message.chat.id, message_id=message.message_id)
 
-# @bot.callback_query_handler(func=lambda call: True)
-# def set(call):
+
+@bot.callback_query_handler(func=lambda call: True)
+def next(call):
 #     # db_object.execute(f"UPDATE users SET lang = '{call.data[0:2]}' WHERE id = {call.from_user.id}") # Змінюєм мову користувача в базі даних
 #     # db_connection.commit()
-#     if call.data[2] == "New topic":
+     if call.data[2].split()[0] == "next":
+        go_over_the_topic(call.message, start = int(call.data[2].split()[2]))
 #         db_object.execute(f"SELECT passed_tests FROM users WHERE id = {call.message.from_user.id}") # Перевіряєм, чи є користувач в базі
 #         result = db_object.fetchone()
 #         if result[0] == "#":
