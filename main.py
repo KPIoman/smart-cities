@@ -19,7 +19,8 @@ def who(message):
     result = db_object.fetchone()
     if result == None:
         db_object.execute("INSERT INTO users(id, access_level, passed_tests) VALUES (%s, %s, %s)", (message.from_user.id, 0, "#"))
-        return "0"
+        db_connection.commit()
+        return 0
     else:
         return result[0] # Якщо користувач вже відомий, повертається його рівень доступу
 
