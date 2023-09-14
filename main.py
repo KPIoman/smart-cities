@@ -32,7 +32,9 @@ def who(message):
 def start(message):
     user_id = message.from_user.id        # Визначаєм id користувача
     username = message.from_user.first_name # Визначаєм ім'я користувача
+    print("Hello")
     db_object.execute("INSERT INTO users(id, access_level, passed_tests) VALUES (%s, %s, %s)", (message.from_user.id, 0, "#"))
+    print("Hello")
     db_connection.commit()
     print("Hello")
     bot.send_message(message.chat.id, message)
