@@ -37,7 +37,7 @@ def start(message):
     
     db_object.execute(f"SELECT access level FROM users WHERE id = {message.from_user.id}") # Беремо з бази мову користувача та чи він забанений
     result = db_object.fetchone()
-    bot.send_message(message.chat.id, str(result))
+    bot.send_message(message.chat.id, "Hello")
     # if result == None:
     #     db_object.execute("INSERT INTO users(id, access level, passed tests) VALUES (%s, %s, %s)", (message.from_user.id, 0, "#"))
     #     bot.send_message(message.chat.id, result)
