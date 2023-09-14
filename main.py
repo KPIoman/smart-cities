@@ -33,7 +33,7 @@ def who(message):
 @bot.message_handler(commands=["start"])                                                        #/start
 def start(message):
     if who(message) == 0: # Звичайний юзер
-        user_step_1(message)
+        user_step_1(message, True)
     # #db_object.execute(f"SELECT lang FROM users WHERE id = {message.from_user.id}") 
     # result = db_object.fetchone()
     # is_banned_variable = is_banned(message)
@@ -48,7 +48,7 @@ def start(message):
     #     bot.send_message(message.chat.id, ban[result[0]]) # Хай петляє
 
 
-def user_step_1(message):
+def user_step_1(message, start = False):
     db_object.execute(f"SELECT passed_tests FROM users WHERE id = {message.from_user.id}") # Перевіряєм, чи є користувач в базі
     result = db_object.fetchone()
     passed_tests = list(map(int, result[0].split(",")))
@@ -56,7 +56,7 @@ def user_step_1(message):
     new_topic = types.KeyboardButton("Нова тема")
     go_over_the_topic = types.KeyboardButton("Перепройти тему")
     markup.add(new_topic, go_over_the_topic)                # Тоже для кнопочок
-    if passed_tests == [-1]:
+    if passed_tests == [-1] and start:
         bot.send_message(message.chat.id, f"Привіт, {message.from_user.username}, бажаємо тобі вдало пройти весь курс, удачі", reply_markup=markup)
     else:
         bot.send_message(message.chat.id, f"Ти пройшов такі теми, як /{', /'.join(passed_tests)}", reply_markup=markup)
