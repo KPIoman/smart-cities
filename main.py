@@ -24,7 +24,7 @@ def who(message):
         db_connection.commit()
         return 0
     else:
-        return result[0] # Якщо користувач вже відомий, повертається його рівень доступу
+        return int(result[0]) # Якщо користувач вже відомий, повертається його рівень доступу
 
 
 
