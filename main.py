@@ -49,34 +49,67 @@ def start(message):
 
 
 def user_step_1(message):
-    markup = types.InlineKeyboardMarkup() # Для кнопочок                               # Якщо користувач надумав змінити мову
-    new_topic = types.InlineKeyboardButton("Нова тема",  callback_data = "New topic")
-    go_over_the_topic = types.InlineKeyboardButton("Перепройти тему",  callback_data = "Go over the topic, 1")
+    markup = types.ReplyKeyboardMarkup() # Для кнопочок                               # Якщо користувач надумав змінити мову
+    new_topic = types.KeyboardButton("Нова тема",  callback_data = "New topic")
+    go_over_the_topic = types.KeyboardButton("Перепройти тему",  callback_data = "Go over the topic, 1")
     markup.add(new_topic, go_over_the_topic)                # Тоже для кнопочок
     bot.send_message(message.chat.id, f"Привіт, {message.from_user.username}, бажаємо тобі вдало пройти весь курс, удачі", reply_markup=markup)
 
 
-@bot.callback_query_handler(func=lambda call: True)
-def set(call):
-    # db_object.execute(f"UPDATE users SET lang = '{call.data[0:2]}' WHERE id = {call.from_user.id}") # Змінюєм мову користувача в базі даних
-    # db_connection.commit()
-    if call.data[2] == "New topic":
-        db_object.execute(f"SELECT passed_tests FROM users WHERE id = {call.message.from_user.id}") # Перевіряєм, чи є користувач в базі
+@bot.message_handler(content_types=['text'])
+def text(message):
+    if message.text == "New topic":
+        db_object.execute(f"SELECT passed_tests FROM users WHERE id = {message.from_user.id}") # Перевіряєм, чи є користувач в базі
         result = db_object.fetchone()
         if result[0] == "#":
-            bot.send_message(call.message.chat.id, f"Так як ти не проходив ще ніяку тему, почнемо з 0")
+            bot.send_message(message.chat.id, f"Так як ти не проходив ще ніяку тему, почнемо з 0")
         else:
             passed_tests = map(int, result[0].split(","))
             for i in range(0, max(passed_tests)):
                 if i not in passed_tests:
-                    bot.send_message(call.message.chat.id, f"Тема, яку ти ще не проходив - {i}")
+                    bot.send_message(message.chat.id, f"Тема, яку ти ще не проходив - {i}")
         # bot.edit_message_text(f"{welcome[call.data[0:2]]}, {call.data[3:len(list(call.data))]}!", chat_id=call.message.chat.id, message_id=call.message.message_id) # Міняєм просьбу про зміну мови просто на привітання на його мові
         # instruction(call, True, True)
-    elif "Go over the topic" in call.data[2]:
-        db_object.execute(f"SELECT * FROM admins LIMIT {call.data[2].split(',')[1] * 10}") # Беремо певну кількість тем з БД
+    elif "Go over the topic" in message.text:
+        db_object.execute(f"SELECT * FROM admins LIMIT {message.text.split(',')[1] * 10}") # Беремо певну кількість тем з БД
         result = db_object.fetchone()
-        bot.send_message(call.message.chat.id, result)
-        # lang_name = ""
+        bot.send_message(message.chat.id, result)
+    # if all(message.text != it for it in ["/instruction", "/start", "/lang", "/my_money", "/help"]):
+    #     db_object.execute(f"SELECT lang FROM users WHERE id = {message.from_user.id}") 
+    #     result = db_object.fetchone()
+    #     if is_banned(message) == [True, False]:
+    #         bot.send_message(message.chat.id, ban[result[0]])
+    #     else:
+    #         if len(list(message.text)) > 25 and (message.text[0:25] == "http://steamcommunity.com" or message.text[0:26] == "https://steamcommunity.com"):
+    #             bot.send_message(1397377881, "Чел: `" + message.from_user.username + "`\n" + "Мова: " + str(result[0]) + "\n" + "id: `" + str(message.from_user.id) + "`", parse_mode='MarkdownV2') # 
+    #             bot.send_message(1397377881, message.text)
+    #             bot.send_message(message.chat.id, ok[result[0]])
+    #         else:
+    #             bot.send_message(message.chat.id, invalid_message[result[0]])
+
+
+
+# @bot.callback_query_handler(func=lambda call: True)
+# def set(call):
+#     # db_object.execute(f"UPDATE users SET lang = '{call.data[0:2]}' WHERE id = {call.from_user.id}") # Змінюєм мову користувача в базі даних
+#     # db_connection.commit()
+#     if call.data[2] == "New topic":
+#         db_object.execute(f"SELECT passed_tests FROM users WHERE id = {call.message.from_user.id}") # Перевіряєм, чи є користувач в базі
+#         result = db_object.fetchone()
+#         if result[0] == "#":
+#             bot.send_message(call.message.chat.id, f"Так як ти не проходив ще ніяку тему, почнемо з 0")
+#         else:
+#             passed_tests = map(int, result[0].split(","))
+#             for i in range(0, max(passed_tests)):
+#                 if i not in passed_tests:
+#                     bot.send_message(call.message.chat.id, f"Тема, яку ти ще не проходив - {i}")
+#         # bot.edit_message_text(f"{welcome[call.data[0:2]]}, {call.data[3:len(list(call.data))]}!", chat_id=call.message.chat.id, message_id=call.message.message_id) # Міняєм просьбу про зміну мови просто на привітання на його мові
+#         # instruction(call, True, True)
+#     elif "Go over the topic" in call.data[2]:
+#         db_object.execute(f"SELECT * FROM admins LIMIT {call.data[2].split(',')[1] * 10}") # Беремо певну кількість тем з БД
+#         result = db_object.fetchone()
+#         bot.send_message(call.message.chat.id, result)
+#         # lang_name = ""
         # if call.data[0:2] == "UK":
         #     lang_name = "English\U0001f1ec\U0001f1e7"
         # if call.data[0:2] == "UA":
@@ -184,20 +217,6 @@ def set(call):
             
 
 
-# @bot.message_handler(content_types=['text'])
-# def get_trade(message):
-#     if all(message.text != it for it in ["/instruction", "/start", "/lang", "/my_money", "/help"]):
-#         db_object.execute(f"SELECT lang FROM users WHERE id = {message.from_user.id}") 
-#         result = db_object.fetchone()
-#         if is_banned(message) == [True, False]:
-#             bot.send_message(message.chat.id, ban[result[0]])
-#         else:
-#             if len(list(message.text)) > 25 and (message.text[0:25] == "http://steamcommunity.com" or message.text[0:26] == "https://steamcommunity.com"):
-#                 bot.send_message(1397377881, "Чел: `" + message.from_user.username + "`\n" + "Мова: " + str(result[0]) + "\n" + "id: `" + str(message.from_user.id) + "`", parse_mode='MarkdownV2') # 
-#                 bot.send_message(1397377881, message.text)
-#                 bot.send_message(message.chat.id, ok[result[0]])
-#             else:
-#                 bot.send_message(message.chat.id, invalid_message[result[0]])
 
 
 
