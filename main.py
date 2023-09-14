@@ -56,6 +56,7 @@ def user_step_1(message):
     new_topic = types.KeyboardButton("Нова тема")
     go_over_the_topic = types.KeyboardButton("Перепройти тему")
     markup.add(new_topic, go_over_the_topic)                # Тоже для кнопочок
+    bot.send_message(message.chat.id, message.message_id, reply_markup=markup)
     if passed_tests == [-1]:
         bot.send_message(message.chat.id, f"Привіт, {message.from_user.username}, бажаємо тобі вдало пройти весь курс, удачі", reply_markup=markup)
     else:
