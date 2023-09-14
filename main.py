@@ -49,12 +49,17 @@ def start(message):
 
 
 def user_step_1(message):
+    db_object.execute(f"SELECT passed_tests FROM users WHERE id = {message.from_user.id}") # Перевіряєм, чи є користувач в базі
+    result = db_object.fetchone()
+    passed_tests = list(map(int, result[0].split(",")))
     markup = types.ReplyKeyboardMarkup() # Для кнопочок                               # Якщо користувач надумав змінити мову
     new_topic = types.KeyboardButton("Нова тема")
     go_over_the_topic = types.KeyboardButton("Перепройти тему")
     markup.add(new_topic, go_over_the_topic)                # Тоже для кнопочок
-    bot.send_message(message.chat.id, f"Привіт, {message.from_user.username}, бажаємо тобі вдало пройти весь курс, удачі", reply_markup=markup)
-
+    if passed_tests == [-1]:
+        bot.send_message(message.chat.id, f"Привіт, {message.from_user.username}, бажаємо тобі вдало пройти весь курс, удачі", reply_markup=markup)
+    else:
+        bot.send_message(message.chat.id, f"Ти пройшов такі теми, як /{', /'.join(passed_tests)}", reply_markup=markup)
 
 @bot.message_handler(content_types=['text'])
 def text(message):
