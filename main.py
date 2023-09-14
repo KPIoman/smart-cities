@@ -102,7 +102,7 @@ def text(message):
 
 
 def go_over_the_topic(message, start = 0):
-    db_object.execute(f"SELECT * FROM admins LIMIT {start}, 10")
+    db_object.execute(f"SELECT * FROM admins OFFSET {start} LIMIT 10")
     result = db_object.fetchone()
     markup1 = types.ReplyKeyboardMarkup()
     markup2 = types.InlineKeyboardMarkup()
