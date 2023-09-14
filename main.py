@@ -29,7 +29,7 @@ server = Flask(__name__)
 
 
 
-@bot.message_handler(commands=["start"])                                                        #/start
+@bot.message_handler()                                                        #/start
 def start(message):
     user_id = message.from_user.id        # Визначаєм id користувача
     username = message.from_user.first_name # Визначаєм ім'я користувача
