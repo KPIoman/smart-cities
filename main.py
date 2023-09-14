@@ -1,6 +1,7 @@
 import os
 import telebot
 import psycopg2
+import logging
 from lang_pack import *
 from config import *
 from telebot import types
@@ -11,7 +12,8 @@ server = Flask(__name__)
 
 db_connection = psycopg2.connect(DB_URI, sslmode="require")
 db_object = db_connection.cursor()
-
+logger = telebot.logger
+logger.setLevel(logging.DEBUG)
 
 
 def who(message):
