@@ -14,14 +14,14 @@ db_object = db_connection.cursor()
 
 
 
-def who(message):
-    db_object.execute(f"SELECT access level FROM users WHERE id = {message.from_user.id}") # Беремо з бази мову користувача та чи він забанений
-    result = db_object.fetchone()
-    if result == None:
-        db_object.execute("INSERT INTO users(id, access level, passed tests) VALUES (%s, %s, %s)", (message.from_user.id, 0, "#"))
-        bot.send_message(message.chat.id, result)
-    else:
-        bot.send_message(message.chat.id, result) # Якщо користувач вже відомий, повертається його рівень доступу
+# def who(message):
+#     db_object.execute(f"SELECT access level FROM users WHERE id = {message.from_user.id}") # Беремо з бази мову користувача та чи він забанений
+#     result = db_object.fetchone()
+#     if result == None:
+#         db_object.execute("INSERT INTO users(id, access level, passed tests) VALUES (%s, %s, %s)", (message.from_user.id, 0, "#"))
+#         bot.send_message(message.chat.id, result)
+#     else:
+#         bot.send_message(message.chat.id, result) # Якщо користувач вже відомий, повертається його рівень доступу
 
 
 
@@ -32,7 +32,13 @@ def start(message):
     user_id = message.from_user.id        # Визначаєм id користувача
     username = message.from_user.first_name # Визначаєм ім'я користувача
     bot.send_message(message.chat.id, message)
-    who(message)
+    db_object.execute(f"SELECT access level FROM users WHERE id = {message.from_user.id}") # Беремо з бази мову користувача та чи він забанений
+    result = db_object.fetchone()
+    if result == None:
+        db_object.execute("INSERT INTO users(id, access level, passed tests) VALUES (%s, %s, %s)", (message.from_user.id, 0, "#"))
+        bot.send_message(message.chat.id, result)
+    else:
+        bot.send_message(message.chat.id, result) # Якщо користувач вже відомий, повертається його рівень доступу
     # #db_object.execute(f"SELECT lang FROM users WHERE id = {message.from_user.id}") 
     # result = db_object.fetchone()
     # is_banned_variable = is_banned(message)
