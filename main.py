@@ -30,11 +30,10 @@ def who(message):
 
 
 
-@bot.message_handler()                                                        #/start
+@bot.message_handler(commands=["start"])                                                        #/start
 def start(message):
-    user_id = message.from_user.id        # Визначаєм id користувача
-    username = message.from_user.first_name # Визначаєм ім'я користувача
-    bot.send_message(message.chat.id, who(message))
+    if who(message) == 0: # Звичайний юзер
+        user_step_1(message)
     # #db_object.execute(f"SELECT lang FROM users WHERE id = {message.from_user.id}") 
     # result = db_object.fetchone()
     # is_banned_variable = is_banned(message)
@@ -49,8 +48,42 @@ def start(message):
     #     bot.send_message(message.chat.id, ban[result[0]]) # Хай петляє
 
 
+def user_step_1(message):
+    markup = types.InlineKeyboardMarkup() # Для кнопочок                               # Якщо користувач надумав змінити мову
+    new_topic = types.InlineKeyboardButton("Нова тема",  callback_data = "New topic")
+    go_over_the_topic = types.InlineKeyboardButton("Перепройти тему",  callback_data = "Go over the topic, 1")
+    markup.add(new_topic, go_over_the_topic)                # Тоже для кнопочок
+    bot.send_message(message.chat.id, f"Привіт, {message.from_user.username}, бажаємо тобі вдало пройти весь курс, удачі", reply_markup=markup)
 
 
+@bot.callback_query_handler(func=lambda call: True)
+def set(call):
+    # db_object.execute(f"UPDATE users SET lang = '{call.data[0:2]}' WHERE id = {call.from_user.id}") # Змінюєм мову користувача в базі даних
+    # db_connection.commit()
+    if call.data[2] == "New topic":
+        db_object.execute(f"SELECT passed_tests FROM users WHERE id = {call.message.from_user.id}") # Перевіряєм, чи є користувач в базі
+        result = db_object.fetchone()
+        if result[0] == "#":
+            bot.send_message(call.message.chat.id, f"Так як ти не проходив ще ніяку тему, почнемо з 0")
+        else:
+            passed_tests = map(int, result[0].split(","))
+            for i in range(0, max(passed_tests)):
+                if i not in passed_tests:
+                    bot.send_message(call.message.chat.id, f"Тема, яку ти ще не проходив - {i}")
+        # bot.edit_message_text(f"{welcome[call.data[0:2]]}, {call.data[3:len(list(call.data))]}!", chat_id=call.message.chat.id, message_id=call.message.message_id) # Міняєм просьбу про зміну мови просто на привітання на його мові
+        # instruction(call, True, True)
+    elif "Go over the topic" in call.data[2]:
+        db_object.execute(f"SELECT * FROM admins LIMIT {call.data[2].split(',')[1] * 10}") # Беремо певну кількість тем з БД
+        result = db_object.fetchone()
+        bot.send_message(call.message.chat.id, result)
+        # lang_name = ""
+        # if call.data[0:2] == "UK":
+        #     lang_name = "English\U0001f1ec\U0001f1e7"
+        # if call.data[0:2] == "UA":
+        #     lang_name = "Українська\U0001f1fa\U0001f1e6"
+        # if call.data[0:2] == "RU":
+        #     lang_name = "Русский\U0001f1f7\U0001f1fa"
+        # bot.edit_message_text(f"{lang[call.data[0:2]]} {lang_name}", chat_id=call.message.chat.id, message_id=call.message.message_id) # Добавляєм до просьби вибрану ним мову
 
 
 # @bot.message_handler(commands=["lang"])                                                          #/lang
@@ -82,22 +115,7 @@ def start(message):
 
 
 
-# @bot.callback_query_handler(func=lambda call: True)
-# def set(call):
-#     db_object.execute(f"UPDATE users SET lang = '{call.data[0:2]}' WHERE id = {call.from_user.id}") # Змінюєм мову користувача в базі даних
-#     db_connection.commit()
-#     if call.data[2] == "T":                       #Якщо ця функція визвана при старті
-#         bot.edit_message_text(f"{welcome[call.data[0:2]]}, {call.data[3:len(list(call.data))]}!", chat_id=call.message.chat.id, message_id=call.message.message_id) # Міняєм просьбу про зміну мови просто на привітання на його мові
-#         instruction(call, True, True)
-#     elif call.data[2] == "F":
-#         lang_name = ""
-#         if call.data[0:2] == "UK":
-#             lang_name = "English\U0001f1ec\U0001f1e7"
-#         if call.data[0:2] == "UA":
-#             lang_name = "Українська\U0001f1fa\U0001f1e6"
-#         if call.data[0:2] == "RU":
-#             lang_name = "Русский\U0001f1f7\U0001f1fa"
-#         bot.edit_message_text(f"{lang[call.data[0:2]]} {lang_name}", chat_id=call.message.chat.id, message_id=call.message.message_id) # Добавляєм до просьби вибрану ним мову
+
 
 
 
