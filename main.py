@@ -76,7 +76,7 @@ def text(message):
         markup = types.ReplyKeyboardMarkup() # Для кнопочок                               # Якщо користувач надумав змінити мову
         go_back = types.KeyboardButton("Назад")
         bot.send_message(message.chat.id, "Список тем", reply_markup=markup.add(go_back))
-        print(result)
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     # if all(message.text != it for it in ["/instruction", "/start", "/lang", "/my_money", "/help"]):
     #     db_object.execute(f"SELECT lang FROM users WHERE id = {message.from_user.id}") 
     #     result = db_object.fetchone()
