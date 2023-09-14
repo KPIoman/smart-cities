@@ -50,15 +50,15 @@ def start(message):
 
 def user_step_1(message):
     markup = types.ReplyKeyboardMarkup() # Для кнопочок                               # Якщо користувач надумав змінити мову
-    new_topic = types.KeyboardButton("Нова тема",  callback_data = "New topic")
-    go_over_the_topic = types.KeyboardButton("Перепройти тему",  callback_data = "Go over the topic, 1")
+    new_topic = types.KeyboardButton("Нова тема")
+    go_over_the_topic = types.KeyboardButton("Перепройти тему")
     markup.add(new_topic, go_over_the_topic)                # Тоже для кнопочок
     bot.send_message(message.chat.id, f"Привіт, {message.from_user.username}, бажаємо тобі вдало пройти весь курс, удачі", reply_markup=markup)
 
 
 @bot.message_handler(content_types=['text'])
 def text(message):
-    if message.text == "New topic":
+    if message.text == "Нова тема":
         db_object.execute(f"SELECT passed_tests FROM users WHERE id = {message.from_user.id}") # Перевіряєм, чи є користувач в базі
         result = db_object.fetchone()
         if result[0] == "#":
@@ -70,8 +70,8 @@ def text(message):
                     bot.send_message(message.chat.id, f"Тема, яку ти ще не проходив - {i}")
         # bot.edit_message_text(f"{welcome[call.data[0:2]]}, {call.data[3:len(list(call.data))]}!", chat_id=call.message.chat.id, message_id=call.message.message_id) # Міняєм просьбу про зміну мови просто на привітання на його мові
         # instruction(call, True, True)
-    elif "Go over the topic" in message.text:
-        db_object.execute(f"SELECT * FROM admins LIMIT {message.text.split(',')[1] * 10}") # Беремо певну кількість тем з БД
+    elif message.text == "Перепройти тему":
+        db_object.execute(f"SELECT * FROM admins LIMIT 10")
         result = db_object.fetchone()
         bot.send_message(message.chat.id, result)
     # if all(message.text != it for it in ["/instruction", "/start", "/lang", "/my_money", "/help"]):
