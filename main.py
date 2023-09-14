@@ -33,7 +33,7 @@ server = Flask(__name__)
 def start(message):
     user_id = message.from_user.id        # Визначаєм id користувача
     username = message.from_user.first_name # Визначаєм ім'я користувача
-    print(message)
+    bot.send_message(message.chat.id, message)
     # #db_object.execute(f"SELECT lang FROM users WHERE id = {message.from_user.id}") 
     # result = db_object.fetchone()
     # is_banned_variable = is_banned(message)
