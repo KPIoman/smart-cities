@@ -88,7 +88,8 @@ def text(message):
         result = db_object.fetchone()
         markup = types.ReplyKeyboardMarkup() # Для кнопочок                               # Якщо користувач надумав змінити мову
         go_back = types.KeyboardButton("Назад на головну")
-        bot.send_message(message.chat.id, "Список тем", reply_markup=markup.add(go_back))
+        logger.warning(result)
+        bot.send_message(message.chat.id, f"Список тем:", reply_markup=markup.add(go_back))
     elif message.text == "Назад на головну":
         user_step_1(message)
     # if all(message.text != it for it in ["/instruction", "/start", "/lang", "/my_money", "/help"]):
