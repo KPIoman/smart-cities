@@ -9,8 +9,8 @@ from flask import Flask, request, render_template
 bot = telebot.TeleBot(BOT_TOKEN)
 server = Flask(__name__)
 
-db_connection = psycopg2.connect(DB_URI, sslmode="require")
-db_object = db_connection.cursor()
+# db_connection = psycopg2.connect(DB_URI, sslmode="require")
+# db_object = db_connection.cursor()
 
 
 
