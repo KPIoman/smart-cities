@@ -61,13 +61,11 @@ def text(message):
     if message.text == "Нова тема":
         db_object.execute(f"SELECT passed_tests FROM users WHERE id = {message.from_user.id}") # Перевіряєм, чи є користувач в базі
         result = db_object.fetchone()
-        if result[0] == "#":
-            bot.send_message(message.chat.id, f"Так як ти не проходив ще ніяку тему, почнемо з 0")
-        else:
-            passed_tests = map(int, result[0].split(","))
-            for i in range(0, max(passed_tests)+1):
-                if i not in passed_tests:
-                    bot.send_message(message.chat.id, f"Тема, яку ти ще не проходив - {i}")
+        passed_tests = map(int, result[0].split(","))
+        for i in range(0, max(passed_tests)+1):
+            if i not in passed_tests:
+                bot.send_message(message.chat.id, f"Тема, яку ти ще не проходив - {i}")
+        bot.send_message(message.chat.id, passed_tests)
         # bot.edit_message_text(f"{welcome[call.data[0:2]]}, {call.data[3:len(list(call.data))]}!", chat_id=call.message.chat.id, message_id=call.message.message_id) # Міняєм просьбу про зміну мови просто на привітання на його мові
         # instruction(call, True, True)
     elif message.text == "Перепройти тему":
