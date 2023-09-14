@@ -72,9 +72,13 @@ def text(message):
         db_object.execute(f"SELECT COUNT(1) FROM admins") # Перевіряєм, чи є користувач в базі
         result = db_object.fetchone()
         logger.warning(result)
+
+        markup = types.ReplyKeyboardMarkup() # Для кнопочок                               # Якщо користувач надумав змінити мову
+        go_back = types.KeyboardButton("Назад на головну")
+
         for i in range(0, result[0]):
             if i not in passed_tests:
-                bot.send_message(message.chat.id, f"Тема, яку ти ще не проходив - {i}")
+                bot.send_message(message.chat.id, f"Тема, яку ти ще не проходив - {i}", reply_markup=markup.add(go_back))
                 break
         #bot.send_message(message.chat.id, passed_tests)
         # bot.edit_message_text(f"{welcome[call.data[0:2]]}, {call.data[3:len(list(call.data))]}!", chat_id=call.message.chat.id, message_id=call.message.message_id) # Міняєм просьбу про зміну мови просто на привітання на його мові
