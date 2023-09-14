@@ -73,7 +73,10 @@ def text(message):
     elif message.text == "Перепройти тему":
         db_object.execute(f"SELECT * FROM admins LIMIT 10")
         result = db_object.fetchone()
-        bot.send_message(message.chat.id, result)
+        markup = types.ReplyKeyboardMarkup() # Для кнопочок                               # Якщо користувач надумав змінити мову
+        go_back = types.KeyboardButton("Назад")
+        bot.send_message(message.chat.id, "", reply_markup=markup.add(go_back))
+        print(result)
     # if all(message.text != it for it in ["/instruction", "/start", "/lang", "/my_money", "/help"]):
     #     db_object.execute(f"SELECT lang FROM users WHERE id = {message.from_user.id}") 
     #     result = db_object.fetchone()
